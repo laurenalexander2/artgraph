@@ -325,7 +325,8 @@
           <li>Results are contingent on cataloging practices and metadata quality</li>
           <li>Vector similarity encodes correlation, not historical explanation</li>
           <li>Image embeddings are not yet integrated</li>
-          <li>Similarity search currently operates in-memory rather than via ANN (so not that fast -- yet!)</li>
+          <li>Similarity search operates in-memory, not via ANN (so search not that fast -- yet!)</li>
+          <li>I only have ~370k artworks indexed</li>
         </ul>
       </div>
     </div>
@@ -336,7 +337,8 @@
         <div class="scene-title">The prototype</div>
 
         <p class="scene-body">
-          The current prototype ingests collection exports, generates and
+          "Prototype" is rather.. inaccurate! Given scale/hardware constraints, more of a proof of concept.
+          The current PoC ingests collection exports, generates and
           persists embeddings, and performs semantic retrieval across indexed
           objects. Dataset provenance, object identity, and embedding state are
           explicitly tracked in a relational schema.
@@ -349,7 +351,7 @@
         </p>
 
         <button id="prototype-btn">
-          Try the prototype →
+          Try the "prototype" →
         </button>
 
         <button id="repo-btn">
