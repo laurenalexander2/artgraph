@@ -12,10 +12,8 @@
     :root {
       --serif: "Times New Roman", serif;
       --sans: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
-
       --nav-idle: #cccccc;
       --nav-hover: #ffffff;
-
       --transition: 0.75s ease;
     }
 
@@ -24,7 +22,7 @@
       padding: 0;
       background: #000;
       color: #fff;
-      overflow: hidden; /* scene-based, no raw scroll */
+      overflow: hidden;
       font-family: var(--sans);
     }
 
@@ -72,12 +70,10 @@
 
     .scene {
       position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
+      inset: 0;
       opacity: 0;
       transform: translateY(40px);
-      transition: opacity var(--transition),
-                  transform var(--transition);
+      transition: opacity var(--transition), transform var(--transition);
       display: flex;
       justify-content: center;
       align-items: center;
@@ -103,11 +99,10 @@
     }
 
     .scene-body {
-      font-family: var(--sans);
       font-size: 18px;
       line-height: 1.7;
       margin: 10px 0;
-      opacity: 0.9;
+      opacity: 0.92;
     }
 
     .scene-body-quiet {
@@ -124,12 +119,8 @@
       opacity: 0.9;
     }
 
-    .scene-bullets li {
-      margin-bottom: 4px;
-    }
-
     /* ===========================
-       HERO SECTION
+       HERO
     ============================ */
     .intro-inner {
       display: flex;
@@ -156,7 +147,6 @@
 
     .logo-video {
       height: 96px;
-      overflow: hidden;
       opacity: 0;
       animation: fadeIn 0.4s forwards 0.1s;
       display: flex;
@@ -179,7 +169,7 @@
     }
 
     /* ===========================
-       ARROW + PREVIEW
+       ARROW
     ============================ */
     #rise-arrow {
       position: fixed;
@@ -212,18 +202,17 @@
     }
 
     /* ===========================
-       PROTOTYPE BUTTONS
+       BUTTONS
     ============================ */
     #prototype-btn,
     #repo-btn {
       padding: 18px 32px;
       background: white;
       color: black;
-      font-family: var(--sans);
       border-radius: 4px;
       font-size: 20px;
       cursor: pointer;
-      display: none; /* shown only in last scene */
+      display: none;
       transition: 0.3s ease;
       border: none;
       margin-top: 16px;
@@ -243,19 +232,19 @@
   <!-- HEADER -->
   <div id="drop-header">
     <a data-target="0">Home</a>
-    <a data-target="1">What We're Building</a>
-    <a data-target="2">For Institutions</a>
-    <a data-target="3">For Users</a>
+    <a data-target="1">The Technology</a>
+    <a data-target="2">Examples</a>
+    <a data-target="3">Current Limitations</a>
     <a data-target="4">The Prototype</a>
   </div>
 
-  <!-- ARROW + PREVIEW -->
+  <!-- ARROW -->
   <div id="rise-arrow">⌄</div>
   <div id="next-preview"></div>
 
   <div class="scene-container">
 
-    <!-- Scene 0 — HERO -->
+    <!-- Scene 0 — HOME -->
     <div class="scene active" id="scene-0">
       <div class="intro-inner">
         <div class="title-row">
@@ -267,70 +256,82 @@
           <h1>Art Nexus</h1>
         </div>
         <h2 id="delayed-sub">
-          Semantic search for museum collections — how humanity will access its archives.
+          A semantic retrieval system for large-scale art-historical corpora.
         </h2>
       </div>
     </div>
 
-    <!-- Scene 1 — WHAT WE'RE BUILDING -->
+    <!-- Scene 1 — THE TECHNOLOGY -->
     <div class="scene" id="scene-1">
       <div class="scene-block">
-        <div class="scene-title">What we’re building</div>
+        <div class="scene-title">The technology</div>
+
         <p class="scene-body">
-          Today, art collections are the world’s largest unstructured knowledge base, trapped in silos that don’t talk to each other.
-          Art Nexus is the missing infrastructure: a semantic layer that lets collections think together.
+          Art Nexus is a computational research infrastructure that represents
+          museum collections as a high-dimensional semantic space. Rather than
+          treating objects as isolated records, the system models collections
+          relationally, allowing meaning to emerge through proximity, clustering,
+          and similarity across large datasets.
         </p>
+
         <p class="scene-body">
-          We ingest collection records and media, generate domain-trained multimodal embeddings (text + image + metadata),
-          and map that information into an evolving cultural knowledge graph. Objects become discoverable by meaning,
-          relationships, iconography, provenance, technique, style, or conceptual connection—not just keyword matches.
+          Institutional collection exports are ingested as versioned datasets.
+          Each object is persisted alongside its full metadata and encoded using
+          transformer-based language models into a shared vector space. User
+          queries are embedded into the same space, enabling similarity-based
+          retrieval via cosine distance rather than rigid schema constraints.
         </p>
-        <p class="scene-body">
-          By plotting in vector space a digital twin of every known art piece, this is the interface to humanity’s archives.
+
+        <ul class="scene-bullets">
+          <li>Backend: FastAPI with SQLite-backed persistence</li>
+          <li>Embedding model: all-MiniLM-L6-v2 (SentenceTransformers)</li>
+          <li>Similarity computation: PyTorch cosine similarity</li>
+          <li>Frontend: multi-page Streamlit research interface</li>
+        </ul>
+
+        <p class="scene-body-quiet">
+          The system prioritizes explicit data modeling, inspectable storage,
+          and methodological extensibility. While implemented as a prototype,
+          its architecture is designed to migrate toward ANN-backed vector
+          databases and multimodal embeddings without altering the research
+          paradigm.
         </p>
       </div>
     </div>
 
-    <!-- Scene 2 — FOR INSTITUTIONS -->
+    <!-- Scene 2 — EXAMPLES -->
     <div class="scene" id="scene-2">
       <div class="scene-block">
-        <div class="scene-title">For institutions</div>
-        <p class="scene-body">
-          Art Nexus sits on top of existing collection systems and turns static records into a living, searchable network.
-          Instead of brittle keyword fields and siloed databases, curators and registrars get a semantic map of their holdings—
-          and, eventually, of the world’s collections.
-        </p>
-        <ul class="scene-bullets">
-          <li>Unify siloed databases into a single semantic layer.</li>
-          <li>Search by concept: “surrealist female portrait, 1950s, lithograph” — not exact field matches.</li>
-          <li>Reveal latent connections: shared iconography, technical affinities, workshop lineages, provenance trails.</li>
-          <li>Support research, exhibitions, and loans with cross-collection discovery.</li>
-        </ul>
+        <div class="scene-title">Examples</div>
         <p class="scene-body-quiet">
-          Art Nexus is designed as an institutional discovery layer and a foundation for future integrations with
-          vector databases, vocabularies, and curator-facing tools.
+          Worked examples and object-level case studies will be presented here.
         </p>
       </div>
     </div>
 
-    <!-- Scene 3 — FOR USERS -->
+    <!-- Scene 3 — CURRENT LIMITATIONS -->
     <div class="scene" id="scene-3">
       <div class="scene-block">
-        <div class="scene-title">For users</div>
+        <div class="scene-title">Current limitations</div>
+
         <p class="scene-body">
-          For researchers, students, and everyday visitors, Art Nexus feels like a search engine built for art,
-          not for the web. You describe what you’re looking for in natural language, and the system returns
-          meaning-linked neighbors across collections.
+          The system’s outputs are shaped by the structure of institutional
+          metadata and the representational assumptions of pretrained language
+          models. Semantic proximity reflects shared descriptive language rather
+          than historical influence or causal relation.
         </p>
+
         <ul class="scene-bullets">
-          <li>Search by feeling, motif, technique, or narrative instead of object IDs and accession numbers.</li>
-          <li>Follow visual and conceptual “threads” through time, place, and medium.</li>
-          <li>Surface overlooked objects that sit just outside canonical labels or cataloging vocabularies.</li>
-          <li>Use similarity search to explore “more like this” across institutions, not just within one museum.</li>
+          <li>Results are contingent on cataloging practices and metadata quality</li>
+          <li>Vector similarity encodes correlation, not historical explanation</li>
+          <li>Image embeddings are not yet integrated</li>
+          <li>Similarity search currently operates in-memory rather than via ANN</li>
         </ul>
+
         <p class="scene-body-quiet">
-          The goal is an interface where someone curious about “early feminist printmaking,” “diasporic surrealism,”
-          or “ritual bronze vessels with animal handles” can step directly into the relevant constellation of works.
+          These constraints define the project’s research horizon. They motivate
+          future work in multimodal modeling, authority-linked vocabularies, and
+          large-scale vector indexing for cultural data.
         </p>
       </div>
     </div>
@@ -339,15 +340,18 @@
     <div class="scene" id="scene-4">
       <div class="scene-block" style="text-align:center;">
         <div class="scene-title">The prototype</div>
+
         <p class="scene-body">
-          The current prototype ingests collection exports (CSV + image hierarchy), generates embeddings,
-          indexes metadata, and performs semantic retrieval. A query is converted into the same embedding space
-          as the objects, and the system returns meaning-linked similarity results across the dataset.
+          The current prototype ingests collection exports, generates and
+          persists embeddings, and performs semantic retrieval across indexed
+          objects. Dataset provenance, object identity, and embedding state are
+          explicitly tracked in a relational schema.
         </p>
+
         <p class="scene-body-quiet">
-          In the demo, a museum can upload a Met-style open-access CSV, watch the index build in batches,
-          and immediately run semantic searches over hundreds of thousands of objects—no schema rewrites,
-          no keyword engineering.
+          The demonstration instance indexes open-access museum data and allows
+          real-time semantic querying across thousands of objects without
+          schema engineering or manual taxonomy construction.
         </p>
 
         <button id="prototype-btn">
@@ -355,7 +359,7 @@
         </button>
 
         <button id="repo-btn">
-          View the repo →
+          View the repository →
         </button>
       </div>
     </div>
@@ -375,18 +379,17 @@
 
       const titles = [
         "Home",
-        "What we're building",
-        "For institutions",
-        "For users",
+        "The technology",
+        "Examples",
+        "Current limitations",
         "The Prototype",
-        ""  // last scene has no next
+        ""
       ];
 
       let currentScene = 0;
       let arrowIsHovered = false;
       let isTransitioning = false;
 
-      /* Reveal header + arrow + subtitle */
       setTimeout(() => {
         header.style.top = "0";
         arrow.style.bottom = "40px";
@@ -396,17 +399,13 @@
 
       function updatePreview() {
         const next = Math.min(currentScene + 1, scenes.length - 1);
-        const label = titles[next];
-
-        nextPreview.textContent = label || "";
-        nextPreview.style.opacity = arrowIsHovered && label ? "1" : "0";
+        nextPreview.textContent = titles[next] || "";
+        nextPreview.style.opacity = arrowIsHovered ? "1" : "0";
       }
 
       function goToScene(index) {
-        if (isTransitioning || index === currentScene || index < 0 || index >= scenes.length) return;
-
+        if (isTransitioning || index === currentScene) return;
         isTransitioning = true;
-
         scenes[currentScene].classList.remove("active");
         currentScene = index;
         scenes[currentScene].classList.add("active");
@@ -414,14 +413,11 @@
         if (currentScene === scenes.length - 1) {
           arrow.style.opacity = "0";
           arrow.style.pointerEvents = "none";
-          nextPreview.style.opacity = "0";
-
           prototypeBtn.style.display = "inline-block";
           repoBtn.style.display = "inline-block";
         } else {
           arrow.style.opacity = "0.9";
           arrow.style.pointerEvents = "auto";
-
           prototypeBtn.style.display = "none";
           repoBtn.style.display = "none";
         }
@@ -430,7 +426,6 @@
         setTimeout(() => (isTransitioning = false), 800);
       }
 
-      /* Hover */
       arrow.addEventListener("mouseenter", () => {
         arrowIsHovered = true;
         updatePreview();
@@ -441,26 +436,22 @@
         nextPreview.style.opacity = "0";
       });
 
-      /* Arrow click → next */
       arrow.addEventListener("click", () => {
         goToScene(currentScene + 1);
       });
 
-      /* Header nav */
       document.querySelectorAll("#drop-header a").forEach(link => {
         link.addEventListener("click", () => {
-          const target = parseInt(link.dataset.target, 10);
-          goToScene(target);
+          goToScene(parseInt(link.dataset.target, 10));
         });
       });
 
-      /* Buttons */
       prototypeBtn.addEventListener("click", () => {
         window.open("https://art-vector-production.up.railway.app", "_blank");
       });
 
       repoBtn.addEventListener("click", () => {
-        window.open("https://github.com/laurenalexander2/art-vector/tree/main", "_blank");
+        window.open("https://github.com/laurenalexander2/art-vector", "_blank");
       });
     });
   </script>
