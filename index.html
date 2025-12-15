@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Art Nexus</title>
+
+  <!-- Inter font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --serif: "Times New Roman", serif;
+      --sans: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+
+      --nav-idle: #cccccc;
+      --nav-hover: #ffffff;
+
+      --transition: 0.75s ease;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background: #000;
+      color: #fff;
+      overflow: hidden; /* scene-based, no raw scroll */
+      font-family: var(--sans);
+    }
+
+    /* ===========================
+       HEADER
+    ============================ */
+    #drop-header {
+      position: fixed;
+      top: -80px;
+      left: 0;
+      width: 100%;
+      height: 80px;
+      background: rgba(10,10,10,0.92);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 50px;
+      font-size: 20px;
+      transition: top 1.2s ease;
+      z-index: 1000;
+    }
+
+    #drop-header a {
+      color: var(--nav-idle);
+      text-decoration: none;
+      font-weight: 300;
+      cursor: pointer;
+      transition: color 0.1s ease, font-style 0.1s ease;
+    }
+
+    #drop-header a:hover {
+      color: var(--nav-hover);
+      font-style: italic;
+    }
+
+    /* ===========================
+       SCENE SYSTEM
+    ============================ */
+    .scene-container {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .scene {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity var(--transition),
+                  transform var(--transition);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .scene.active {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .scene-block {
+      max-width: 780px;
+      padding: 0 40px;
+      margin: 0 auto;
+      text-align: left;
+    }
+
+    .scene-title {
+      font-family: var(--serif);
+      font-size: 52px;
+      margin-bottom: 18px;
+    }
+
+    .scene-body {
+      font-family: var(--sans);
+      font-size: 18px;
+      line-height: 1.7;
+      margin: 10px 0;
+      opacity: 0.9;
+    }
+
+    .scene-body-quiet {
+      font-size: 16px;
+      opacity: 0.78;
+      margin-top: 20px;
+    }
+
+    .scene-bullets {
+      margin: 18px 0 0;
+      padding-left: 18px;
+      font-size: 18px;
+      line-height: 1.7;
+      opacity: 0.9;
+    }
+
+    .scene-bullets li {
+      margin-bottom: 4px;
+    }
+
+    /* ===========================
+       HERO SECTION
+    ============================ */
+    .intro-inner {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      text-align: center;
+      align-items: center;
+    }
+
+    .title-row {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .title-row h1 {
+      font-family: var(--serif);
+      font-size: 96px;
+      margin: 0;
+      opacity: 0;
+      animation: fadeIn 1.4s forwards 0.4s;
+      font-weight: 400;
+    }
+
+    .logo-video {
+      height: 96px;
+      overflow: hidden;
+      opacity: 0;
+      animation: fadeIn 0.4s forwards 0.1s;
+      display: flex;
+      align-items: center;
+    }
+
+    .logo-video video {
+      height: 100%;
+      width: auto;
+      object-fit: cover;
+    }
+
+    #delayed-sub {
+      opacity: 0;
+      font-size: 24px;
+      font-weight: 300;
+      max-width: 720px;
+      line-height: 1.5;
+      transition: opacity 1.4s ease;
+    }
+
+    /* ===========================
+       ARROW + PREVIEW
+    ============================ */
+    #rise-arrow {
+      position: fixed;
+      bottom: -100px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 32px;
+      opacity: 0;
+      cursor: pointer;
+      transition: bottom 1.2s ease, opacity 1.2s ease, transform 0.25s ease;
+      font-weight: 300;
+      z-index: 900;
+    }
+
+    #rise-arrow:hover {
+      transform: translateX(-50%) scale(1.1);
+      opacity: 1;
+    }
+
+    #next-preview {
+      position: fixed;
+      bottom: 85px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 18px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+      z-index: 900;
+    }
+
+    /* ===========================
+       PROTOTYPE BUTTONS
+    ============================ */
+    #prototype-btn,
+    #repo-btn {
+      padding: 18px 32px;
+      background: white;
+      color: black;
+      font-family: var(--sans);
+      border-radius: 4px;
+      font-size: 20px;
+      cursor: pointer;
+      display: none; /* shown only in last scene */
+      transition: 0.3s ease;
+      border: none;
+      margin-top: 16px;
+    }
+
+    #prototype-btn:hover,
+    #repo-btn:hover {
+      opacity: 0.85;
+    }
+
+    @keyframes fadeIn { to { opacity: 1; } }
+  </style>
+</head>
+
+<body>
+
+  <!-- HEADER -->
+  <div id="drop-header">
+    <a data-target="0">Home</a>
+    <a data-target="1">What We're Building</a>
+    <a data-target="2">For Institutions</a>
+    <a data-target="3">For Users</a>
+    <a data-target="4">The Prototype</a>
+  </div>
+
+  <!-- ARROW + PREVIEW -->
+  <div id="rise-arrow">⌄</div>
+  <div id="next-preview"></div>
+
+  <div class="scene-container">
+
+    <!-- Scene 0 — HERO -->
+    <div class="scene active" id="scene-0">
+      <div class="intro-inner">
+        <div class="title-row">
+          <div class="logo-video">
+            <video autoplay muted playsinline>
+              <source src="trimmed space.mov" type="video/mp4" />
+            </video>
+          </div>
+          <h1>Art Nexus</h1>
+        </div>
+        <h2 id="delayed-sub">
+          Semantic search for museum collections — how humanity will access its archives.
+        </h2>
+      </div>
+    </div>
+
+    <!-- Scene 1 — WHAT WE'RE BUILDING -->
+    <div class="scene" id="scene-1">
+      <div class="scene-block">
+        <div class="scene-title">What we’re building</div>
+        <p class="scene-body">
+          Today, art collections are the world’s largest unstructured knowledge base, trapped in silos that don’t talk to each other.
+          Art Nexus is the missing infrastructure: a semantic layer that lets collections think together.
+        </p>
+        <p class="scene-body">
+          We ingest collection records and media, generate domain-trained multimodal embeddings (text + image + metadata),
+          and map that information into an evolving cultural knowledge graph. Objects become discoverable by meaning,
+          relationships, iconography, provenance, technique, style, or conceptual connection—not just keyword matches.
+        </p>
+        <p class="scene-body">
+          By plotting in vector space a digital twin of every known art piece, this is the interface to humanity’s archives.
+        </p>
+      </div>
+    </div>
+
+    <!-- Scene 2 — FOR INSTITUTIONS -->
+    <div class="scene" id="scene-2">
+      <div class="scene-block">
+        <div class="scene-title">For institutions</div>
+        <p class="scene-body">
+          Art Nexus sits on top of existing collection systems and turns static records into a living, searchable network.
+          Instead of brittle keyword fields and siloed databases, curators and registrars get a semantic map of their holdings—
+          and, eventually, of the world’s collections.
+        </p>
+        <ul class="scene-bullets">
+          <li>Unify siloed databases into a single semantic layer.</li>
+          <li>Search by concept: “surrealist female portrait, 1950s, lithograph” — not exact field matches.</li>
+          <li>Reveal latent connections: shared iconography, technical affinities, workshop lineages, provenance trails.</li>
+          <li>Support research, exhibitions, and loans with cross-collection discovery.</li>
+        </ul>
+        <p class="scene-body-quiet">
+          Art Nexus is designed as an institutional discovery layer and a foundation for future integrations with
+          vector databases, vocabularies, and curator-facing tools.
+        </p>
+      </div>
+    </div>
+
+    <!-- Scene 3 — FOR USERS -->
+    <div class="scene" id="scene-3">
+      <div class="scene-block">
+        <div class="scene-title">For users</div>
+        <p class="scene-body">
+          For researchers, students, and everyday visitors, Art Nexus feels like a search engine built for art,
+          not for the web. You describe what you’re looking for in natural language, and the system returns
+          meaning-linked neighbors across collections.
+        </p>
+        <ul class="scene-bullets">
+          <li>Search by feeling, motif, technique, or narrative instead of object IDs and accession numbers.</li>
+          <li>Follow visual and conceptual “threads” through time, place, and medium.</li>
+          <li>Surface overlooked objects that sit just outside canonical labels or cataloging vocabularies.</li>
+          <li>Use similarity search to explore “more like this” across institutions, not just within one museum.</li>
+        </ul>
+        <p class="scene-body-quiet">
+          The goal is an interface where someone curious about “early feminist printmaking,” “diasporic surrealism,”
+          or “ritual bronze vessels with animal handles” can step directly into the relevant constellation of works.
+        </p>
+      </div>
+    </div>
+
+    <!-- Scene 4 — THE PROTOTYPE -->
+    <div class="scene" id="scene-4">
+      <div class="scene-block" style="text-align:center;">
+        <div class="scene-title">The prototype</div>
+        <p class="scene-body">
+          The current prototype ingests collection exports (CSV + image hierarchy), generates embeddings,
+          indexes metadata, and performs semantic retrieval. A query is converted into the same embedding space
+          as the objects, and the system returns meaning-linked similarity results across the dataset.
+        </p>
+        <p class="scene-body-quiet">
+          In the demo, a museum can upload a Met-style open-access CSV, watch the index build in batches,
+          and immediately run semantic searches over hundreds of thousands of objects—no schema rewrites,
+          no keyword engineering.
+        </p>
+
+        <button id="prototype-btn">
+          Try the prototype →
+        </button>
+
+        <button id="repo-btn">
+          View the repo →
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const header = document.getElementById("drop-header");
+      const arrow = document.getElementById("rise-arrow");
+      const subtitle = document.getElementById("delayed-sub");
+      const nextPreview = document.getElementById("next-preview");
+      const prototypeBtn = document.getElementById("prototype-btn");
+      const repoBtn = document.getElementById("repo-btn");
+
+      const scenes = document.querySelectorAll(".scene");
+
+      const titles = [
+        "Home",
+        "What we're building",
+        "For institutions",
+        "For users",
+        "The Prototype",
+        ""  // last scene has no next
+      ];
+
+      let currentScene = 0;
+      let arrowIsHovered = false;
+      let isTransitioning = false;
+
+      /* Reveal header + arrow + subtitle */
+      setTimeout(() => {
+        header.style.top = "0";
+        arrow.style.bottom = "40px";
+        arrow.style.opacity = "0.9";
+        subtitle.style.opacity = "1";
+      }, 3000);
+
+      function updatePreview() {
+        const next = Math.min(currentScene + 1, scenes.length - 1);
+        const label = titles[next];
+
+        nextPreview.textContent = label || "";
+        nextPreview.style.opacity = arrowIsHovered && label ? "1" : "0";
+      }
+
+      function goToScene(index) {
+        if (isTransitioning || index === currentScene || index < 0 || index >= scenes.length) return;
+
+        isTransitioning = true;
+
+        scenes[currentScene].classList.remove("active");
+        currentScene = index;
+        scenes[currentScene].classList.add("active");
+
+        if (currentScene === scenes.length - 1) {
+          arrow.style.opacity = "0";
+          arrow.style.pointerEvents = "none";
+          nextPreview.style.opacity = "0";
+
+          prototypeBtn.style.display = "inline-block";
+          repoBtn.style.display = "inline-block";
+        } else {
+          arrow.style.opacity = "0.9";
+          arrow.style.pointerEvents = "auto";
+
+          prototypeBtn.style.display = "none";
+          repoBtn.style.display = "none";
+        }
+
+        updatePreview();
+        setTimeout(() => (isTransitioning = false), 800);
+      }
+
+      /* Hover */
+      arrow.addEventListener("mouseenter", () => {
+        arrowIsHovered = true;
+        updatePreview();
+      });
+
+      arrow.addEventListener("mouseleave", () => {
+        arrowIsHovered = false;
+        nextPreview.style.opacity = "0";
+      });
+
+      /* Arrow click → next */
+      arrow.addEventListener("click", () => {
+        goToScene(currentScene + 1);
+      });
+
+      /* Header nav */
+      document.querySelectorAll("#drop-header a").forEach(link => {
+        link.addEventListener("click", () => {
+          const target = parseInt(link.dataset.target, 10);
+          goToScene(target);
+        });
+      });
+
+      /* Buttons */
+      prototypeBtn.addEventListener("click", () => {
+        window.open("https://art-vector-production.up.railway.app", "_blank");
+      });
+
+      repoBtn.addEventListener("click", () => {
+        window.open("https://github.com/laurenalexander2/art-vector/tree/main", "_blank");
+      });
+    });
+  </script>
+
+</body>
+</html>
